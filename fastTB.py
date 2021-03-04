@@ -489,7 +489,7 @@ class Summerizer(object):
         #     new_population.append(type_B)
 
 
-        return new_population 
+        return new_population, new_popsize
     
 
     def find_best_individual(self, population):
@@ -526,7 +526,7 @@ class Summerizer(object):
         population = self.generate_population(self.population_size)
         popsize = self.population_size
         for i in tqdm(range(self.max_generation)):
-            population = self.selection(population, popsize)
+            population, popsize = self.selection(population, popsize)
         return self.find_best_individual(population)
     
     
