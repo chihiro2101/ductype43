@@ -1,0 +1,14 @@
+The Hubble Space Telescope orbited with its big eye open Friday after ground controllers overcame communications problems and lifted its lens cover, but its electronics were shut down due to a malfunction.
+Those problems, however, were not the immediate concern of shuttle Discovery's astronauts, who prepared for Sunday's return to Earth.
+It's on its own,'' Mission Control's Story Musgrave told the five crew members.
+``That's great news,'' replied Discovery commander Loren J. Shriver.
+Discovery is to land at 9:48 a.m. EDT Sunday at Edwards Air Force Base, Calif.
+Landing would have been delayed a day if astronauts Bruce McCandless and Kathryn Sullivan had had to perform a space walk to crank open the telescope's lens cover, or aperture door.
+One of the two antennas apparently had swung too far, and the telescope shut down, said Jean Oliver, a Hubble deputy project manager.
+If future movements of the antenna have to be limited to avoid the problem, it would have only slight impact on the telescope's observing time, Oliver said.
+When the door opened, two of Hubble's four position-stabilizing gyroscopes stopped working; later, engineers got them back on line.
+The motion of the lens cover knocked out the gyros, said Dave Drachlis of the Goddard Space Flight Center in Maryland.
+It will take another day to get the instrument operating normally again, putting controllers at Goddard several days behind.
+``We're trying to be very deliberate and trying not to cut any corners and do anything fast because we feel there's a lot at risk here and we want to make sure we're doing it properly,'' Oliver said.
+``We've got a long future ahead of us, and we want to make sure it starts off on the right foot.''
+Tolerances for the telescope systems were set particularly narrow for the first operations and that was the cause of many malfunctions, Terry said.

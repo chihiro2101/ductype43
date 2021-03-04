@@ -1,0 +1,14 @@
+Ground controllers at the Goddard Space Flight Center finally made contact today with the two main antennas on the $1.5 billion Hubble Space Telescope after trying for more than six hours to lock on.
+Applause erupted in the Hubble control center in Greenbelt, Md., as the glitch that marred Hubble's first full day in space was solved.
+Engineers had said all along they believed the antennas were working all right and that the problem was in incorrectly pointing either the satellite or the TDRS, an orbiting communications satellite that acts as a switchboard.
+In the successful attempt, they nearly doubled the width of the antennas' beams to take in more territory, from a sweep of 6.2 degrees to 10.8 degrees.
+The telescope's low-gain antennas, which receive and transmit information at a much slower rate and can be used in emergencies, were working well.
+Space shuttle Discovery was 46 miles away, available to remedy certain problems.
+The outage was not a problem for which space walkers would have been summoned.
+The second failure occurred at 6:44 a.m. when controllers attempted to send a signal to the telescope's two high-gain antennas through the TDRS.
+Mission Control awakened the crew early today with a loud rendition of the song ``Shout,'' a fraternity house favorite.
+``We appreciate the good words from everybody,'' replied Discovery Commander Loren Shriver.
+``The telescope really looked great as we flew away from it, and we sure hope it does good work,''
+Then on Tuesday, NASA expects to release the first image from the telescope: an open star cluster in the constellation Carina.
+If the aperture door doesn't open properly, Discovery could return to the telescope so two astronauts could perform a spacewalk to fix it.
+Discovery, which blasted into orbit Tuesday, is scheduled to land Sunday at Edwards Air Force Base, Calif.
