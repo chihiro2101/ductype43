@@ -25,7 +25,7 @@ import math
 import multiprocessing
 
 class Summerizer(object):
-    def __init__(self, title, sentences, raw_sentences, population_size, max_generation, crossover_rate, mutation_rate, num_picked_sents, simWithTitle, simWithDoc, sim2sents, number_of_nouns, order_params):
+    def __init__(self, title, sentences, raw_sentences, population_size, max_generation, crossover_rate, mutation_rate, num_picked_sents, simWithTitle, simWithDoc, sim2sents, number_of_nouns, order_params, MinLT, MaxLT):
         self.title = title
         self.raw_sentences = raw_sentences
         self.sentences = sentences
@@ -40,6 +40,8 @@ class Summerizer(object):
         self.sim2sents = sim2sents
         self.number_of_nouns = number_of_nouns
         self.order_params = order_params
+        self.MinLT = MinLT
+        self.MaxLT = MaxLT
 
 
     def generate_population(self, amount):
@@ -62,8 +64,10 @@ class Summerizer(object):
             chromosome2 =  chromosome2.tolist()
             fitness2 = compute_fitness(self.title, self.sentences, chromosome2, self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
             fitness = max(fitness1, fitness2)
+            life_time = 0
+            age = 0
             
-            typeA.append((chromosome1, chromosome2, fitness))
+            typeA.append((chromosome1, chromosome2, fitness, life_time, age))
             
             
             #creat type B
@@ -72,7 +76,7 @@ class Summerizer(object):
             chromosome3 =  chromosome3.tolist()
             fitness3 = compute_fitness(self.title, self.sentences, chromosome3, self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
             chromosome4 = []
-            typeB.append((chromosome3, chromosome4, fitness3))
+            typeB.append((chromosome3, chromosome4, fitness3, life_time, age))
 
 
         population.append(typeA)
@@ -140,19 +144,19 @@ class Summerizer(object):
         if self.num_objects < 2 or random.random() >= self.crossover_rate:
             return individual_1[:], individual_2[:]
 
-        individual_2 = random.choice(individual_2[:-1])
+        individual_2 = random.choice(individual_2[:2])
 
 
         if len(individual_2) == 0:
             fitness1 = compute_fitness(self.title, self.sentences, individual_1[0], self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
-            child1 = (individual_1[0], individual_2, fitness1)
+            child1 = (individual_1[0], individual_2, fitness1, 0, 0)
             fitness2 = compute_fitness(self.title, self.sentences, individual_1[1], self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
-            child2 = (individual_1[1], individual_2, fitness2)
+            child2 = (individual_1[1], individual_2, fitness2, 0, 0)
             return child1, child2
 
 
 
-        individual_1 = random.choice(individual_1[:-1])
+        individual_1 = random.choice(individual_1[:2])
         
         #tìm điểm chéo 1
         crossover_point = 1 + random.randint(0, self.num_objects - 2)
@@ -165,9 +169,9 @@ class Summerizer(object):
         fitness_1b = compute_fitness(self.title, self.sentences, agent_1b, self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
         
         if fitness_1a > fitness_1b:
-            child_1 = (agent_1a, agent_1b, fitness_1a)
+            child_1 = (agent_1a, agent_1b, fitness_1a, 0, 0)
         else:
-            child_1 = (agent_1a, agent_1b, fitness_1b)
+            child_1 = (agent_1a, agent_1b, fitness_1b, 0, 0)
 
         #tìm điểm chéo 2
         crossover_point_2 = 1 + random.randint(0, self.num_objects - 2)
@@ -181,9 +185,9 @@ class Summerizer(object):
         fitness_2b = compute_fitness(self.title, self.sentences, agent_2b, self.simWithTitle, self.simWithDoc,self.sim2sents, self.number_of_nouns, self.order_params)
         
         if fitness_2a > fitness_2b:
-            child_2 = (agent_2a, agent_2b, fitness_2a)
+            child_2 = (agent_2a, agent_2b, fitness_2a, 0, 0)
         else:
-            child_2 = (agent_2a, agent_2b, fitness_2b)        
+            child_2 = (agent_2a, agent_2b, fitness_2b, 0, 0)        
         
         return child_1, child_2
     
@@ -203,13 +207,13 @@ class Summerizer(object):
                     #     chromosome[i] = 0
                     #     sum_sent_in_summary -=1     
             fitness = compute_fitness(self.title, self.sentences, chromosome , self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
-            return (chromosome, individual[1], fitness)
+            return (chromosome, individual[1], fitness, 0, 0)
 
         if random.random() < 0.05 :
-            chromosome  = random.choice(individual[:-1])
+            chromosome  = random.choice(individual[:2])
             null_chromosome = []
             fitness = compute_fitness(self.title, self.sentences, chromosome , self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
-            return(chromosome, null_chromosome, fitness) 
+            return(chromosome, null_chromosome, fitness, 0, 0) 
 
 
         chromosome1 = individual[0][:]
@@ -239,7 +243,7 @@ class Summerizer(object):
         fitness1 = compute_fitness(self.title, self.sentences, chromosome1, self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
         fitness2 = compute_fitness(self.title, self.sentences, chromosome2, self.simWithTitle, self.simWithDoc, self.sim2sents, self.number_of_nouns, self.order_params)
         fitness = max(fitness1, fitness2)
-        return (chromosome1, chromosome2, fitness)
+        return (chromosome1, chromosome2, fitness, 0, 0)
 
     def compare(self, lst1, lst2):
         for i in range(self.num_objects):
@@ -260,7 +264,66 @@ class Summerizer(object):
         return individual, check
 
 
-    def selection(self, population):
+    def calculate_lifetime(self, fitness, avg_fitness):
+        eta = int(1/2*(self.MaxLT - self.MinLT)*(fitness/avg_fitness))
+        life_time = min(self.MinLT + eta, self.MaxLT)
+        return life_time
+
+    def evaluate_age(self, population):
+        
+        fitness_value = []
+        for individual in population[0]:
+            fitness_value.append(individual[2])
+        for individual in population[1]:
+            fitness_value.append(individual[2])   
+        try:
+            avg_fitness = sta.mean(fitness_value)
+        except: 
+            print('bug')
+            import pdb; pdb.set_trace()
+
+
+        new_typeA = []
+        new_typeB = []
+        #life_time
+        for individual in population[0]:
+            indiv = list(individual)
+            indiv[3] =  self.calculate_lifetime(indiv[2], avg_fitness)
+            indiv[4] += 1
+            new_typeA.append(tuple(indiv))
+
+        for individual in population[1]:
+            indiv = list(individual)
+            indiv[3] =  self.calculate_lifetime(indiv[2], avg_fitness)
+            indiv[4] += 1
+            new_typeB.append(tuple(indiv))
+
+            
+        population[0] = new_typeA
+        population[1] = new_typeB
+        return population 
+
+    def check_timelife(self, population):
+        count = 0
+        new_typeA = []
+        new_typeB = []
+        for individual in population[0]:
+            if individual[3] == individual[4]:
+                count +=1
+            else:
+                new_typeA.append(individual)
+
+        for individual in population[1]:
+            if individual[3] == individual[4]:
+                count +=1
+            else:
+                new_typeB.append(individual)
+
+        return count, new_typeA, new_typeB
+
+
+    def selection(self, population, popsize):
+        self.evaluate_age(population)
         max_sent = int(len(self.sentences)*0.3)
         if len(self.sentences) < 4:
             max_sent = len(self.sentences)
@@ -281,10 +344,10 @@ class Summerizer(object):
         chosen_agents_B = int(0.1*len(population[1]))
         
         elitismA = population[0][ : chosen_agents_A ]
-        new_typeA = elitismA
+        # new_typeA = elitismA
 
         elitismB = population[1][ : chosen_agents_B]
-        new_typeB = elitismB
+        # new_typeB = elitismB
 
 
 
@@ -296,7 +359,7 @@ class Summerizer(object):
         for indivi in population[1]:
             total_fitness = total_fitness + indivi[2]  
         
-        population_size = self.population_size
+        population_size = popsize
         cpop = 0.0
 
 
@@ -365,49 +428,65 @@ class Summerizer(object):
             else:
                 cpop += check1 + check2
 
+        new_size = min(len(new_typeA), len(new_typeB))
+        
+        #remove old individual
         new_population.append(new_typeA)
         new_population.append(new_typeB)
+        self.evaluate_age(new_population)
 
-        fitness_value = []
-        for individual in new_typeA:
-            fitness_value.append(individual[2])
-        for individual in new_typeB:
-            fitness_value.append(individual[2])   
-        try:
-            avg_fitness = sta.mean(fitness_value)
-        except: 
-            return self.generate_population(population_size)
-        agents_in_Ev = [] 
+        Dsize , typeA_current_population, typeB_current_population = self.check_timelife(population)
+        import pdb; pdb.set_trace()
 
-        for agent in new_typeA:
-            if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
-                agents_in_Ev.append(agent)
-        for agent in new_typeB:
-            if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
-                agents_in_Ev.append(agent)
+        new_population[0].extend(elitismA)
+        new_population[0].extend(typeA_current_population)
+
+        new_population[1].extend(elitismB)
+        new_population[1].extend(typeB_current_population)
 
 
-        if len(agents_in_Ev) >= self.population_size*0.9 :
+        new_popsize = popsize + new_size - Dsize
 
-            new_population = self.generate_population(int(self.population_size*0.7))
-            chosen = self.population_size - int(self.population_size*0.7)
+        # fitness_value = []
+        # for individual in new_typeA:
+        #     fitness_value.append(individual[2])
+        # for individual in new_typeB:
+        #     fitness_value.append(individual[2])   
+        # try:
+        #     avg_fitness = sta.mean(fitness_value)
+        # except: 
+        #     return self.generate_population(population_size)
+        # agents_in_Ev = [] 
 
-            type_A = new_population[0]
-            type_B = new_population[1]
+        # for agent in new_typeA:
+        #     if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
+        #         agents_in_Ev.append(agent)
+        # for agent in new_typeB:
+        #     if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
+        #         agents_in_Ev.append(agent)
 
-            new_typeA = sorted(new_typeA, key=lambda x: x[2], reverse=True)
-            new_typeB = sorted(new_typeB, key=lambda x: x[2], reverse=True)
-            new_typeA = new_typeA[ : chosen]
-            new_typeB = new_typeB[ : chosen]
+
+        # if len(agents_in_Ev) >= self.population_size*0.9 :
+
+        #     new_population = self.generate_population(int(self.population_size*0.7))
+        #     chosen = self.population_size - int(self.population_size*0.7)
+
+        #     type_A = new_population[0]
+        #     type_B = new_population[1]
+
+        #     new_typeA = sorted(new_typeA, key=lambda x: x[2], reverse=True)
+        #     new_typeB = sorted(new_typeB, key=lambda x: x[2], reverse=True)
+        #     new_typeA = new_typeA[ : chosen]
+        #     new_typeB = new_typeB[ : chosen]
 
 
-            for x in new_typeA:
-                type_A.append(x)
-            for y in new_typeB:
-                type_B.append(y)
-            new_population = []
-            new_population.append(type_A)
-            new_population.append(type_B)
+        #     for x in new_typeA:
+        #         type_A.append(x)
+        #     for y in new_typeB:
+        #         type_B.append(y)
+        #     new_population = []
+        #     new_population.append(type_A)
+        #     new_population.append(type_B)
 
 
         return new_population 
@@ -445,8 +524,9 @@ class Summerizer(object):
    #MASingleDocSum    
     def solve(self):
         population = self.generate_population(self.population_size)
+        popsize = self.population_size
         for i in tqdm(range(self.max_generation)):
-            population = self.selection(population)
+            population = self.selection(population, popsize)
         return self.find_best_individual(population)
     
     
@@ -534,9 +614,11 @@ def start_run(processID, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, sub_storie
             NUM_PICKED_SENTS = len(sentences)
         else:
             NUM_PICKED_SENTS = 4
-
+        
+        MinLT = 1
+        MaxLT = 7 
             
-        Solver = Summerizer(title, sentences, raw_sentences, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, NUM_PICKED_SENTS, simWithTitle, simWithDoc, sim2sents, number_of_nouns, order_params)
+        Solver = Summerizer(title, sentences, raw_sentences, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, NUM_PICKED_SENTS, simWithTitle, simWithDoc, sim2sents, number_of_nouns, order_params, MinLT, MaxLT)
         best_individual = Solver.solve()
         file_name = os.path.join(save_path, example[1] )         
 
@@ -673,8 +755,12 @@ def main():
     start_time = time.time()
 
     
-    multiprocess(6, POPU_SIZE, MAX_GEN, CROSS_RATE,
-                 MUTATE_RATE, stories, save_path)
+    # multiprocess(6, POPU_SIZE, MAX_GEN, CROSS_RATE,
+    #              MUTATE_RATE, stories, save_path)
+
+
+
+    start_run(1, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, stories, save_path[0], 0)
 
     print("--- %s mins ---" % ((time.time() - start_time)/(60.0*len(stories))))
 
