@@ -279,7 +279,7 @@ class Summerizer(object):
         try:
             avg_fitness = sta.mean(fitness_value)
         except: 
-            print('bug')
+            print("bug")
             import pdb; pdb.set_trace()
 
 
@@ -433,10 +433,15 @@ class Summerizer(object):
         #remove old individual
         new_population.append(new_typeA)
         new_population.append(new_typeB)
+
+        if len(new_typeA) == 0 or len(new_typeB) == 0:
+            print("bug")
+            import pdb; pdb.set_trace()
+
+
         self.evaluate_age(new_population)
 
         Dsize , typeA_current_population, typeB_current_population = self.check_timelife(population)
-        import pdb; pdb.set_trace()
 
         new_population[0].extend(elitismA)
         new_population[0].extend(typeA_current_population)
