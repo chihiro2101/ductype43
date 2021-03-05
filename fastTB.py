@@ -376,7 +376,7 @@ class Summerizer(object):
                     try:
                         parent_1 = random.choice(population[0])
                     except:
-                        return self.generate_population(population_size)
+                        return self.generate_population(population_size), self.population_size
             parent_2 = None
 
             check_time_2 = time.time()
@@ -386,7 +386,7 @@ class Summerizer(object):
                     try:
                         parent_2 =  random.choice(population[1])
                     except:
-                        return self.generate_population(population_size)
+                        return self.generate_population(population_size), self.population_size
                 if parent_2 != None:
                     if self.compare(parent_2[0], parent_1[0]) or self.compare(parent_2[0], parent_1[1]):
                         parent_2 = self.roulette_select(total_fitness, population[1])
@@ -428,18 +428,24 @@ class Summerizer(object):
             else:
                 cpop += check1 + check2
 
+        # try:
+        #     new_size = min(len(new_typeA), len(new_typeB))
+        #     new_population.append(new_typeA)
+        #     new_population.append(new_typeB)
+        #     self.evaluate_age(new_population)
+        # except: 
+        #     new_size = 0
+
+
         new_size = min(len(new_typeA), len(new_typeB))
-        
-        #remove old individual
-        new_population.append(new_typeA)
-        new_population.append(new_typeB)
 
-        if len(new_typeA) == 0 or len(new_typeB) == 0:
-            print("bug")
-            import pdb; pdb.set_trace()
-
-
-        self.evaluate_age(new_population)
+        if new_size != 0 :
+            new_population.append(new_typeA)
+            new_population.append(new_typeB)
+            self.evaluate_age(new_population)
+        else:
+            new_population = self.generate_population(self.population_size)
+            self.evaluate_age(new_population)
 
         Dsize , typeA_current_population, typeB_current_population = self.check_timelife(population)
 
@@ -452,46 +458,55 @@ class Summerizer(object):
 
         new_popsize = popsize + new_size - Dsize
 
-        # fitness_value = []
-        # for individual in new_typeA:
-        #     fitness_value.append(individual[2])
-        # for individual in new_typeB:
-        #     fitness_value.append(individual[2])   
-        # try:
-        #     avg_fitness = sta.mean(fitness_value)
-        # except: 
-        #     return self.generate_population(population_size)
-        # agents_in_Ev = [] 
-
-        # for agent in new_typeA:
-        #     if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
-        #         agents_in_Ev.append(agent)
-        # for agent in new_typeB:
-        #     if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
-        #         agents_in_Ev.append(agent)
+        if len(new_population[0]) == 0 or len(new_population[1]) == 0:
+            print("bug")
+            import pdb; pdb.set_trace()
+            print("wait...")
 
 
-        # if len(agents_in_Ev) >= self.population_size*0.9 :
+        fitness_value = []
+        for individual in new_population[0]:
+            fitness_value.append(individual[2])
+        for individual in new_population[1]:
+            fitness_value.append(individual[2])   
 
-        #     new_population = self.generate_population(int(self.population_size*0.7))
-        #     chosen = self.population_size - int(self.population_size*0.7)
+        try:
+            avg_fitness = sta.mean(fitness_value)
+        except: 
+            return self.generate_population(population_size), self.population_size
 
-        #     type_A = new_population[0]
-        #     type_B = new_population[1]
+        agents_in_Ev = [] 
 
-        #     new_typeA = sorted(new_typeA, key=lambda x: x[2], reverse=True)
-        #     new_typeB = sorted(new_typeB, key=lambda x: x[2], reverse=True)
-        #     new_typeA = new_typeA[ : chosen]
-        #     new_typeB = new_typeB[ : chosen]
+        for agent in new_population[0]:
+            if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
+                agents_in_Ev.append(agent)
+        for agent in new_population[1]:
+            if (agent[2] > 0.95*avg_fitness) and (agent[2] < 1.05*avg_fitness):
+                agents_in_Ev.append(agent)
 
 
-        #     for x in new_typeA:
-        #         type_A.append(x)
-        #     for y in new_typeB:
-        #         type_B.append(y)
-        #     new_population = []
-        #     new_population.append(type_A)
-        #     new_population.append(type_B)
+        if len(agents_in_Ev) >= new_popsize*0.9 :
+            new_popsize = self.population_size
+            widen_population = self.generate_population(int(new_popsize*0.7))
+            self.evaluate_age(widen_population)
+            chosen = new_popsize - int(new_popsize*0.7)
+
+            type_A = widen_population[0]
+            type_B = widen_population[1]
+
+            new_typeA = sorted(new_population[0], key=lambda x: x[2], reverse=True)
+            new_typeB = sorted(new_population[1], key=lambda x: x[2], reverse=True)
+            new_typeA = new_typeA[ : chosen]
+            new_typeB = new_typeB[ : chosen]
+
+
+            for x in new_typeA:
+                type_A.append(x)
+            for y in new_typeB:
+                type_B.append(y)
+            new_population = []
+            new_population.append(type_A)
+            new_population.append(type_B)
 
 
         return new_population, new_popsize
@@ -760,12 +775,12 @@ def main():
     start_time = time.time()
 
     
-    # multiprocess(6, POPU_SIZE, MAX_GEN, CROSS_RATE,
-    #              MUTATE_RATE, stories, save_path)
+    multiprocess(6, POPU_SIZE, MAX_GEN, CROSS_RATE,
+                 MUTATE_RATE, stories, save_path)
 
 
 
-    start_run(1, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, stories, save_path[0], 0)
+    # start_run(1, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, stories, save_path[0], 0)
 
     print("--- %s mins ---" % ((time.time() - start_time)/(60.0*len(stories))))
 
