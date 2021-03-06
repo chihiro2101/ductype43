@@ -134,7 +134,6 @@ class Summerizer(object):
                 remove_point = 1 + random.randint(0, self.num_objects - 2)
                 if agent[remove_point] == 1:
                     agent[remove_point] = 0
-                    sent = self.sentences[remove_point]
                     sum_sent_in_summary -=1    
         return agent
 
