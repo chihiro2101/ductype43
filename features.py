@@ -154,12 +154,12 @@ class METRIC(object):
             le = 0.3
             pos = 0.1
             noun = 0.3
-        elif self.order_params == 3:
-            # parameters set 3
-            rel = 0.35
-            le = 0.2
-            pos = 0.2
-            noun = 0.25       
+        # elif self.order_params == 3:
+        #     # parameters set 3
+        #     rel = 0.35
+        #     le = 0.2
+        #     pos = 0.2
+        #     noun = 0.25       
 
         # My
         # rel = 0.25

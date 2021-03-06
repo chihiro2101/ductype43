@@ -652,7 +652,7 @@ def start_run(processID, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, sub_storie
 
 def a_process_do(processID, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, sub_stories, save_path, next_part):
         rouge_score = []
-        for i in range(4): 
+        for i in range(3): 
             #chạy từng bộ
             start_run(processID, POPU_SIZE, MAX_GEN, CROSS_RATE, MUTATE_RATE, sub_stories, save_path, i) 
             #tính rouge của từng bộ
